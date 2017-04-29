@@ -11,11 +11,12 @@ public class Game {
      public int turn;
      
      int gameOver;
-    
+     AlphaBetaPlayer player;
     
     Game(){
         turn = turn_you;
         gameOver = -1;
+        player = new AlphaBetaPlayer();
         play();
     }
     
@@ -23,6 +24,7 @@ public class Game {
         Board board = new Board();
         System.out.println(board);
         int move;
+        //board.printDiagonalPosition();
         Random rand = new Random();
         while(gameOver == -1) {
             System.out.println("\n*****Turn: " + turn + "*****");
@@ -33,7 +35,7 @@ public class Game {
                 Scanner scanner = new Scanner(System.in);
                 move = scanner.nextInt();
             } else{
-                move = rand.nextInt(6);
+                move = player.makeMove(board);
                 // Computer Move
 //            System.out.println("Move: " + move);
             }
