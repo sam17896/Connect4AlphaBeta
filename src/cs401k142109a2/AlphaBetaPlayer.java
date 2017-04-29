@@ -108,7 +108,7 @@ public class AlphaBetaPlayer {
 
         double result = 0;
 
-        if (turn == 1) {
+        if (turn == turn_player) {
             megasearch:
             for (String s : mega) {
                 if (s.contains("1111")) {
