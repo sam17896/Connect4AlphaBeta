@@ -8,7 +8,7 @@ public class AlphaBetaPlayer {
     public static final int turn_player = 2;
     public static final int turn_computer = 1;  
     
-    int turn = turn_computer;
+    int turn;
     
     List<Integer> possibleMoves;
     List<Integer> values;
@@ -16,6 +16,7 @@ public class AlphaBetaPlayer {
     public AlphaBetaPlayer() {
         possibleMoves = new ArrayList();
         values = new ArrayList();
+        turn = turn_computer;
     }
     
     int makeMove(Board board){
@@ -25,10 +26,10 @@ public class AlphaBetaPlayer {
       possibleMoves = board.getPossibleMoves();
       Random rand = new Random();
       
-      double alpha = Double.NEGATIVE_INFINITY;
-      double beta = Double.POSITIVE_INFINITY;
+      double a = Double.NEGATIVE_INFINITY; // alpha
+      double b = Double.POSITIVE_INFINITY; // beta
       
-      double bestValue = alpha;
+      double bestValue = a;
       
       while(possibleMoves.size() > 0){
           
@@ -37,9 +38,7 @@ public class AlphaBetaPlayer {
           possibleMoves.remove(index);
           double score;
           board.makeMove(turn, m);
-          turn = turn_player;
-          score = alphabeta(turn, board,alpha,beta,depth);
-          turn = turn_computer;
+          score = alphabeta(changeTurn(turn), board, a, b, depth);
           board.undoMove(turn, m);
           
           if (score > bestValue) {
@@ -51,7 +50,7 @@ public class AlphaBetaPlayer {
       return move;  
     }
     
-    double alphabeta(int turn, Board node, double alpha, double beta,int depth){
+    double alphabeta(int turn, Board node, double alpha, double beta, int depth){
       //  System.out.println("i am here in alphabeta");
         if(depth==0||node.isGameOver() != -1){
             return evaluate(turn, node);
@@ -100,7 +99,7 @@ public class AlphaBetaPlayer {
         }
     }
     
-    double evaluate(int turn,Board board){
+    double evaluate(int turn, Board board){
         List<String> mega = new ArrayList();
         mega.addAll(board.rows);
         mega.addAll(board.cols);
@@ -109,16 +108,27 @@ public class AlphaBetaPlayer {
         double result = 0;
 
         if (turn == turn_player) {
-            megasearch:
-            for (String s : mega) {
+            result = heuristicPlayer(mega);
+        } else {
+            result = heuristicComputer(mega);
+        }
+        
+        //result += Math.random()/1000;
+        return result;
+    }
+    
+    public double heuristicPlayer(List<String> mega){
+        double result = 0;
+        for (String s : mega) {
                 if (s.contains("1111")) {
                     result = 1000;
-                    break megasearch;
+                    return result;
                 }
                 else if(s.contains("2222")) {
                     result = -1000;
-                    break megasearch;
+                    return result;
                 }
+                
                 if (s.contains("01110")) {
                     result += 150;
                 }
@@ -156,16 +166,21 @@ public class AlphaBetaPlayer {
                     result -= 10;
                 }
             }
-        } else {
-            megasearch:
+        
+        return result;
+
+    }
+    
+    public double heuristicComputer(List<String> mega){
+       double result = 0;
             for (String s : mega) {
                 if (s.contains("2222")) {
                     result = 1000;
-                    break megasearch;
+                    return result;
                 }
                 else if(s.contains("1111")) {
                     result = -1000;
-                    break megasearch;
+                    return result;
                 }
                 if (s.contains("02220")) {
                     result += 150;
@@ -198,10 +213,15 @@ public class AlphaBetaPlayer {
                     result -= 10;
                 }
             }
-
+            return result;
+    }
+    
+    private int changeTurn(int t) {
+        if (t == turn_player) {
+            t = turn_computer;
+        }else{
+            t = turn_player;
         }
-        
-        //result += Math.random()/1000;
-        return result;
+        return t;
     }
 }
