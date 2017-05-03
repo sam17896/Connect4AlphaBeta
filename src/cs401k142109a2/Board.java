@@ -40,11 +40,11 @@ class Board {
         int row = indices[column];
         if (row == 0 || row > ROWS) {
             System.out.println("\nError: Can't undo this move\n");
-        }
-        indices[column]--;
-        board[row-1][column] = 0;
-        updateRCD(0, row-1, column);
- 
+        }else{
+            indices[column]--;
+            board[row-1][column] = 0;
+            updateRCD(0, row-1, column);
+         }
     }
 
     public int[][] getBoardArray() {
@@ -88,7 +88,7 @@ class Board {
         int row = indices[column];
         if (row != ROWS) {
             board[row][column] = turn;
-            indices[turn]++;
+            indices[column]++;
                 
             updateRCD(turn, row, column);
             return;

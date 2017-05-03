@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 public class AlphaBetaPlayer {
-    public static final int turn_player = 2;
-    public static final int turn_computer = 1;  
+    public static final int turn_player = 1;
+    public static final int turn_computer = 2;  
     
     int turn;
     
@@ -36,11 +36,12 @@ public class AlphaBetaPlayer {
           int index = rand.nextInt(possibleMoves.size());
           int m = possibleMoves.get(index);
           possibleMoves.remove(index);
-          double score;
+          double score = 0;
           board.makeMove(turn, m);
-          score = alphabeta(changeTurn(turn), board, a, b, depth);
+          score = alphabeta(turn, board, a, b, depth);
           board.undoMove(turn, m);
           
+          System.out.println("move " + m + " Score: " + score);
           if (score > bestValue) {
             bestValue = score;
             move = m;
@@ -52,9 +53,10 @@ public class AlphaBetaPlayer {
     
     double alphabeta(int turn, Board node, double alpha, double beta, int depth){
       //  System.out.println("i am here in alphabeta");
-        if(depth==0||node.isGameOver() != -1){
+        if(depth==0 || node.isGameOver() != -1 || node.getPossibleMoves().size() == 0){
             return evaluate(turn, node);
         }
+        turn = changeTurn(turn);
    //     System.out.println("i am here in alphabeta");
         Random random = new Random();
         List<Integer> movelist = new ArrayList();
@@ -65,11 +67,8 @@ public class AlphaBetaPlayer {
                 int index = random.nextInt(movelist.size());
                 int m = movelist.get(index);
                 movelist.remove(index);
-                System.out.println("player: " + turn + " evaluating move " +index);
                 node.makeMove(turn, m);
-                turn = turn_player;
                 score = alphabeta(turn, node, alpha, beta,depth-1);
-                turn = turn_computer;
                 node.undoMove(turn, m);
                if (score > alpha)
                     alpha = score; //you have found a better move
@@ -86,9 +85,7 @@ public class AlphaBetaPlayer {
                 movelist.remove(index);
                 
                 node.makeMove(turn, m);
-                turn = turn_player;
                 score = alphabeta(turn, node, alpha, beta,depth-1);
-                turn = turn_computer;
                 node.undoMove(turn, m);
                if (score < beta)
                     beta = score; //you have found a better move
