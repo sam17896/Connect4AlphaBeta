@@ -10,16 +10,97 @@ public class AlphaBetaPlayer {
     
     int turn;
     
+    double bestValue;
+    
     List<Integer> possibleMoves;
-    List<Integer> values;
+    double[] values;
 
     public AlphaBetaPlayer() {
         possibleMoves = new ArrayList();
-        values = new ArrayList();
         turn = turn_computer;
     }
-    
+   
     int makeMove(Board board){
+        
+        int depth = 7;
+        double alpha = Double.NEGATIVE_INFINITY;
+        double beta = Double.POSITIVE_INFINITY;
+        
+        possibleMoves = board.getPossibleMoves();
+        values = new double[possibleMoves.size()];
+        
+        int move = minimax(board, depth, turn, alpha, beta);
+        
+        
+        return move;
+    }
+    
+    int minimax(Board board, int depth, int turn, double alpha, double beta){
+        int move = -1;
+                
+        Random rand = new Random(possibleMoves.size());
+        double score = Double.NEGATIVE_INFINITY;
+        
+        int counter = 0;
+        
+        while(possibleMoves.size() > 0){
+          
+          int index = rand.nextInt(possibleMoves.size());
+          int m = possibleMoves.get(index);
+          possibleMoves.remove(index);
+          board.makeMove(turn, m);
+          values[m] = alphaBeta(board, changeTurn(turn), alpha, beta, depth);
+            System.out.println("move: "+ m + " score: "+ values[m]);
+          board.undoMove(turn, m);
+        
+        }
+        double max = Double.NEGATIVE_INFINITY;
+        for(int v = 0; v<values.length;v++){
+            if(values[v] > max){
+                max = values[v];
+                move = v;
+            }
+        }
+        
+        
+        return move;
+    }
+    
+    double alphaBeta(Board board, int turn, double alpha, double beta, int depth){
+        if(depth==0 || board.getPossibleMoves().size() == 0 || board.isGameOver() != -1){
+            return evaluate(turn, board);
+        }
+        
+        double bestValue = 0;
+        if(turn == turn_computer){
+            bestValue = alpha;
+            for(int n: board.getPossibleMoves()){
+                board.makeMove(turn, n);
+                double v = alphaBeta(board, changeTurn(turn),alpha, beta, depth-1);
+                board.undoMove(turn, n);
+                bestValue = Math.max(bestValue,v);
+                if (bestValue > alpha)
+                    alpha = bestValue; //you have found a better move
+                if (alpha >= beta)
+                    return alpha;
+            }
+        }else{
+            bestValue = beta;
+            for(int n : board.getPossibleMoves()){
+                board.makeMove(turn, n);
+                double m = alphaBeta(board, changeTurn(turn),alpha,beta,depth-1);
+                board.undoMove(turn, n);
+                bestValue = Math.min(bestValue, m);
+                if (bestValue < beta)
+                    beta = bestValue; ///you have found a better move
+                if (alpha >= beta)
+                    return beta;
+            }
+        }
+        return bestValue;
+    }
+    
+/*    int makeMove(Board board){
       int move = -1;
       int depth = 7;
       
@@ -36,12 +117,15 @@ public class AlphaBetaPlayer {
           int index = rand.nextInt(possibleMoves.size());
           int m = possibleMoves.get(index);
           possibleMoves.remove(index);
+          
           double score = 0;
+          
           board.makeMove(turn, m);
           score = alphabeta(turn, board, a, b, depth);
           board.undoMove(turn, m);
           
           System.out.println("move " + m + " Score: " + score);
+          
           if (score > bestValue) {
             bestValue = score;
             move = m;
@@ -52,12 +136,12 @@ public class AlphaBetaPlayer {
     }
     
     double alphabeta(int turn, Board node, double alpha, double beta, int depth){
-      //  System.out.println("i am here in alphabeta");
+      
         if(depth==0 || node.isGameOver() != -1 || node.getPossibleMoves().size() == 0){
             return evaluate(turn, node);
         }
         turn = changeTurn(turn);
-   //     System.out.println("i am here in alphabeta");
+     
         Random random = new Random();
         List<Integer> movelist = new ArrayList();
         if(turn == turn_computer){
@@ -68,7 +152,9 @@ public class AlphaBetaPlayer {
                 int m = movelist.get(index);
                 movelist.remove(index);
                 node.makeMove(turn, m);
-                score = alphabeta(turn, node, alpha, beta,depth-1);
+                double v = alphabeta(turn, node, alpha, beta,depth-1);
+                score = Math.max(score, v);
+                System.out.println("Score: " + score + " turn: " + turn + " \n" + node);
                 node.undoMove(turn, m);
                if (score > alpha)
                     alpha = score; //you have found a better move
@@ -85,7 +171,9 @@ public class AlphaBetaPlayer {
                 movelist.remove(index);
                 
                 node.makeMove(turn, m);
-                score = alphabeta(turn, node, alpha, beta,depth-1);
+                double v = alphabeta(turn, node, alpha, beta,depth-1);
+                score = Math.min(score, v);
+                System.out.println("Score: " + score + " turn: " + turn + " \n" + node);
                 node.undoMove(turn, m);
                if (score < beta)
                     beta = score; //you have found a better move
@@ -95,13 +183,15 @@ public class AlphaBetaPlayer {
             return beta;
         }
     }
+  */
     
     double evaluate(int turn, Board board){
         List<String> mega = new ArrayList();
         mega.addAll(board.rows);
         mega.addAll(board.cols);
         mega.addAll(board.diagonals);
-
+        
+        turn = changeTurn(turn);
         double result = 0;
 
         if (turn == turn_player) {
