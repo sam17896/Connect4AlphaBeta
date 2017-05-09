@@ -6,8 +6,8 @@ import java.util.Scanner;
 
 public class Game {
     
-     public static final int turn_you = 1;
-     public static final int turn_computer = 2;
+     int turn_player = 1;
+     int turn_computer = 2;
      
      public int turn;
      
@@ -16,7 +16,7 @@ public class Game {
      AlphaBetaPlayer player;
     
     Game(){
-        turn = turn_you;
+        turn = turn_player;
         gameOver = -1;
         gameDraw = false;
         player = new AlphaBetaPlayer();
@@ -24,67 +24,112 @@ public class Game {
     }
     
     public void play(){
+        
         Board board = new Board();
-        System.out.println(board);
         int move;
-      
+        
+        System.out.println("Board is of size " + board.rows + " " + board.cols + "\n");
+        System.out.println("Player is 'X'\n");
+        System.out.println("Computer is 'O'\n");
+        System.out.println("Empty place '-'\n");
+        
         Random rand = new Random();
+        
+        System.out.println(board);
+        
         while(gameOver == -1 && !gameDraw) {
-            if(turn == turn_you){
+            if(turn == turn_player){
                 System.out.println("\n*****Player's Turn*****\n");
             }else{
                 System.out.println("\n*****Computer's Turn*****\n");
             }
         
-            if(turn == turn_you){
-                System.out.print("Make a move: ");
+            if(turn == turn_player){
+                System.out.println("\nAvailable Moves: \n");
+                List<Integer> movelist = board.getPossibleMoves();
+                
+                for (int i : movelist){
+                    System.out.print(i + " ");
+                }
+                
+                System.out.print("\nMake a move: \n");
+                
                 Scanner scanner = new Scanner(System.in);
                 move = scanner.nextInt();
             }
             else{
+                
                 move = player.makeMove(board);
                 System.out.println("\nComputer makes move at column " + move);
+                System.out.println(player.counter);
+                player.counter = 0;
             }
             
             board.makeMove(turn, move);
-            System.out.println(board);
             
             
-            //This should be commented out after final testing 
-            System.out.println("Rows: " + board.rows);
-            System.out.println("Cols: "+ board.cols);
-            System.out.println("Diags: "+board.diagonals);
+            if(turn == turn_player && board.moveTaken){
+                System.out.println(board);
+            
+            
+                //This should be commented out after final testing 
+                System.out.println("Rows: " + board.Srow);
+                System.out.println("Cols: "+ board.Scol);
+                System.out.println("Diags: "+board.Sdiagonals);
 
-            gameOver = board.isGameOver();
+                gameOver = board.isGameOver();
+                List<Integer> availableMoves = board.getPossibleMoves(); 
+                if (availableMoves.size()==0){
+                    gameDraw = true;
+                }
+                if(gameOver != -1){
+                    if (gameOver == 1){
+                        System.out.println("\nPlayer (X) wins\n");
+                    }else if (gameOver==2){
+                        System.out.println("\nPlayer (O) wins\n");
 
-            turn = changeTurn(turn);
-            
-            List<Integer> availableMoves = board.getPossibleMoves();
-            System.out.println(availableMoves.size());
-  
-            if (availableMoves.size()==0){
-                gameDraw = true;
-            }
-   
-    }
-        if(gameOver != -1){
-            if (gameOver == 1){
-                System.out.println("\nPlayer (X) wins\n");
-            }else if (gameOver==2){
-                System.out.println("\nPlayer (O) wins\n");
+                    }
+                } else if (gameDraw){
+                    System.out.println("\nGame Draw\n");
+                }
+                turn = changeTurn(turn);
+                board.moveTaken = false;
+            }else if (turn == turn_computer){
                 
-            }
-        } else if (gameDraw){
-            System.out.println("\nGame Draw\n");
-        }
+                System.out.println(board);
             
+            
+                //This should be commented out after final testing 
+                System.out.println("Rows: " + board.Srow);
+                System.out.println("Cols: "+ board.Scol);
+                System.out.println("Diags: "+board.Sdiagonals);
+
+                gameOver = board.isGameOver();
+                List<Integer> availableMoves = board.getPossibleMoves(); 
+                if (availableMoves.size()==0){
+                    gameDraw = true;
+                }
+                if(gameOver != -1){
+                    if (gameOver == 1){
+                        System.out.println("\nPlayer (X) wins\n");
+                    }else if (gameOver==2){
+                        System.out.println("\nPlayer (O) wins\n");
+
+                    }
+                } else if (gameDraw){
+                    System.out.println("\nGame Draw\n");
+                }
+                turn = changeTurn(turn);
+            }
+           
+    }
     }
 
     private int changeTurn(int t) {
-        if (t == turn_you) {
+        if (t == turn_player) {
             t = turn_computer;
         }else{
-            t = turn_you;
+            t = turn_player;
         }
         return t;
     }
