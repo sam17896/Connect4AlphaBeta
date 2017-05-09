@@ -3,31 +3,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Board {
-    public static final int ROWS = 4;
-    public static final int COLS = 6;
+    int rows = 4;
+    int cols = 6;
+    
+    boolean moveTaken;
     
     private int[][] board;
     
-    protected int[] indices;
+    protected int[] columnPos;
 
-    protected List<String> rows;
-    protected List<String> cols;
-    protected List<String> diagonals;
+    protected List<String> Srow;
+    protected List<String> Scol;
+    protected List<String> Sdiagonals;
     
     String[][] diagonalPosition;
 
     public Board() {
     
-        board = new int[ROWS][COLS];
-        diagonalPosition =  new String[ROWS][COLS];
-        indices = new int[6];
-        
+        board = new int[rows][cols];
+        diagonalPosition =  new String[rows][cols];
+        columnPos = new int[6];
+        moveTaken = false;
 
-        rows = new ArrayList();
-        cols = new ArrayList();
-        diagonals = new ArrayList();
+        Srow = new ArrayList();
+        Scol = new ArrayList();
+        Sdiagonals = new ArrayList();
                 
-        setRCD();
+        initialize();
+        
     }
     
     public void undoMove(int turn, int column) {
@@ -37,16 +40,18 @@ class Board {
         
         // column = move taken by player
         
-        int row = indices[column];
-        if (row == 0 || row > ROWS) {
+        int row = columnPos[column];
+        if (row == 0 || row > rows) {
             System.out.println("\nError: Can't undo this move\n");
         }else{
-            indices[column]--;
+            columnPos[column]--;
             board[row-1][column] = 0;
-            updateRCD(0, row-1, column);
+            
+            updateState(0, row-1, column);
          }
     }
 
+/*    
     public int[][] getBoardArray() {
         return board;
     }
@@ -54,21 +59,21 @@ class Board {
     public int pieceAt(int row, int col) {
         return board[row][col];
     }
-
+*/
     
     // to print the board
     @Override
     public String toString() {
         String Board = new String();
         
-        for(int row = ROWS-1; row >= 0; row--) {
-            for(int col = 0; col < COLS; col++) {
+        for(int row = rows-1; row >= 0; row--) {
+            for(int col = 0; col < cols; col++) {
                 switch(board[row][col]) {
                     case 1: Board += "X"; break;
                     case 2: Board += "O"; break;
                     default:Board += "-"; break;
                 }
-                if (col != COLS-1) {
+                if (col != cols-1) {
                     Board += " ";
                 }
             }
@@ -84,28 +89,48 @@ class Board {
         // turn = 2 for computer
         
         // column = move taken by player
-       
-        int row = indices[column];
-        if (row != ROWS) {
-            board[row][column] = turn;
-            indices[column]++;
-                
-            updateRCD(turn, row, column);
-            return;
+        if (column > 5){
+           
+        }else{
+            int row = columnPos[column];
+            if (row != rows) {
+                board[row][column] = turn;
+                columnPos[column]++;
+
+                updateState(turn, row, column);
+                if(turn == 1){
+                    moveTaken = true;
+                }
+                return;
+            }
         }
         
         System.out.println("\nError: Wrong Move\n");
     }
-    private void updateRCD(int piece, int row, int col) {
+    
+    public void copy(Board board){
+        
+        this.rows = board.rows;
+        this.cols = board.cols;
+        this.board = board.board;
+        this.columnPos = board.columnPos;
+        this.Srow = board.Srow;
+        this.Scol = board.Scol;
+        this.Sdiagonals = board.Sdiagonals;
+        this.diagonalPosition = board.diagonalPosition;
+    
+    }
+    
+    private void updateState(int piece, int row, int col) {
         char newPiece = (char)(piece+48);
 
-        String r = rows.get(row);
+        String r = Srow.get(row);
         r = r.substring(0,col) + newPiece + r.substring(col+1);
-        rows.set(row, r);
+        Srow.set(row, r);
 
-        String c = cols.get(col);
+        String c = Scol.get(col);
         c = c.substring(0,row) + newPiece + c.substring(row+1);
-        cols.set(col, c);
+        Scol.set(col, c);
         
         if(diagonalPosition[row][col] == ""){
             
@@ -115,23 +140,23 @@ class Board {
                 int q = Integer.parseInt(arg[1]);
                 int w = Integer.parseInt(arg[2]);
                 
-                String e = diagonals.get(q);
+                String e = Sdiagonals.get(q);
                 e = e.substring(0,w) +  newPiece + e.substring(w+1); 
-                diagonals.set(q, e);
+                Sdiagonals.set(q, e);
                 
                 int i = Integer.parseInt(arg[4]);
                 int t = Integer.parseInt(arg[5]);
                 
-                String y = diagonals.get(i);
+                String y = Sdiagonals.get(i);
                 y = y.substring(0,t) +  newPiece + y.substring(t+1); 
-                diagonals.set(i, y);
+                Sdiagonals.set(i, y);
                 
             }else{
                 int pos = Integer.parseInt(arg[1]);
                 int posX = Integer.parseInt(arg[2]);
-                String d = diagonals.get(pos);
+                String d = Sdiagonals.get(pos);
                 d = d.substring(0,posX) +  newPiece + d.substring(posX+1); 
-                diagonals.set(pos, d);
+                Sdiagonals.set(pos, d);
             }
         }
         
@@ -141,7 +166,7 @@ class Board {
     //return: 0 for no win, 1 for player 1 win, 2 for player 2 win
     public int isGameOver() {
     
-        for (String s : rows) {
+        for (String s : Srow) {
             if (s.contains("1111")) {
                 return 1;
             }
@@ -149,7 +174,7 @@ class Board {
                 return 2;
             }
         }
-        for (String s : cols) {
+        for (String s : Scol) {
             if (s.contains("1111")) {
                 return 1;
             }
@@ -157,7 +182,7 @@ class Board {
                 return 2;
             }
         }
-        for (String s : diagonals) {
+        for (String s : Sdiagonals) {
             if (s.contains("1111")) {
                 return 1;
             }
@@ -170,32 +195,32 @@ class Board {
 
     public List<Integer> getPossibleMoves() {
         List<Integer> result = new ArrayList();
-        for(int col = 0; col < COLS; col++) {
-            if (indices[col] != ROWS) {
+        for(int col = 0; col < cols; col++) {
+            if (columnPos[col] != rows) {
                 result.add(col);
             }
         }
         return result;
     }
 
-    protected void setRCD() {
+    protected void initialize() {
         
-        for(int i=0;i<ROWS;i++){
-            for(int j=0;j<COLS;j++){
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
                 diagonalPosition[i][j] = "";
             }
         }
         
-        rows = getRowsAsStr();
-        cols = getColsAsStr();
-        diagonals = getDiagsAsStr();
+        Srow = getRowsAsStr();
+        Scol = getColsAsStr();
+        Sdiagonals = getDiagsAsStr();
     }
     
     protected List<String> getRowsAsStr() {
         List<String> result = new ArrayList();
-        for(int row = 0; row < ROWS; row++) {
+        for(int row = 0; row < rows; row++) {
             String s = "";
-            for (int col = 0; col < COLS; col++) {
+            for (int col = 0; col < cols; col++) {
                 s += board[row][col];
             }
             result.add(s);
@@ -205,9 +230,9 @@ class Board {
 
     protected List<String> getColsAsStr() {
         List<String> result = new ArrayList();
-        for (int col = 0; col < COLS; col++) {
+        for (int col = 0; col < cols; col++) {
             String s = "";
-            for(int row = 0; row < ROWS; row++) {
+            for(int row = 0; row < rows; row++) {
                 s += board[row][col];
             }
             result.add(s);
@@ -253,13 +278,6 @@ class Board {
         
         return result;
     }
-    void printDiagonalPosition(){
-        for(int i=0;i<ROWS;i++){
-            for(int j=0;j<COLS;j++){
-                System.out.println(i+" "+j+" "+diagonalPosition[i][j]);
-            }
-        }
-    }
-
+    
 }
 
