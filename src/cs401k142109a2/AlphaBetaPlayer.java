@@ -96,7 +96,9 @@ public class AlphaBetaPlayer {
     }
     
     double evaluate(int turn, Board board){
+        
         List<String> all = new ArrayList();
+        
         all.addAll(board.Srow);
         all.addAll(board.Scol);
         all.addAll(board.Sdiagonals);
