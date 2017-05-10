@@ -148,19 +148,19 @@ public class AlphaBetaPlayer {
                     result -= 4;
                 }
                 if(s.contains("02220")) {
-                    result -= 15;
+                    result -= 20;
                 }
                 else if(s.contains("2220") || s.contains("0222")) {
-                    result -= 10;
+                    result -= 12;
                 }
                 else if(s.contains("2022") || s.contains ("2202")) {
-                    result -= 9;
+                    result -= 11;
                 }
                 else if (s.contains("2200") || s.contains("0022")) {
-                    result -= 1;
+                    result -= 3;
                 }
                 else if (s.contains("0220")) {
-                    result -= 1;
+                    result -= 3;
                 }
             }
         
@@ -198,16 +198,16 @@ public class AlphaBetaPlayer {
                     result -= 4;
                 }
                 if (s.contains("01110")) {
-                    result -= 15;
+                    result -= 20;
                 }
                 else if(s.contains("1110") || s.contains("0111")) {
-                    result -= 10;
+                    result -= 12;
                 }
                 else if(s.contains("1011") || s.contains ("1101")) {
-                    result -= 9;
+                    result -= 11;
                 }
                 else if (s.contains("110") || s.contains("011")) {
-                    result -= 1;
+                    result -= 3;
                 }
             }
             return result;
