@@ -120,6 +120,7 @@ public class Game {
                     System.out.println("\nGame Draw\n");
                 }
                 turn = changeTurn(turn);
+                board.moveTaken = false;
             }
            
     }

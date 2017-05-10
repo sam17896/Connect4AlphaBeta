@@ -21,7 +21,7 @@ public class AlphaBetaPlayer {
    
     int makeMove(Board board){
         
-        int depth = 7;
+        int depth = 4;
         
         double alpha = Double.NEGATIVE_INFINITY;
         double beta = Double.POSITIVE_INFINITY;
