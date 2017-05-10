@@ -61,7 +61,7 @@ public class Game {
                 
                 move = player.makeMove(board);
                 System.out.println("\nComputer makes move at column " + move);
-                System.out.println(player.counter);
+                System.out.println("Computer evaluated " + player.counter + " States");
                 player.counter = 0;
             }
             
@@ -73,9 +73,9 @@ public class Game {
             
             
                 //This should be commented out after final testing 
-                System.out.println("Rows: " + board.Srow);
-                System.out.println("Cols: "+ board.Scol);
-                System.out.println("Diags: "+board.Sdiagonals);
+            //     System.out.println("Rows: " + board.Srow);
+            //      System.out.println("Cols: "+ board.Scol);
+            //     System.out.println("Diags: "+board.Sdiagonals);
 
                 gameOver = board.isGameOver();
                 List<Integer> availableMoves = board.getPossibleMoves(); 
@@ -100,9 +100,9 @@ public class Game {
             
             
                 //This should be commented out after final testing 
-                System.out.println("Rows: " + board.Srow);
-                System.out.println("Cols: "+ board.Scol);
-                System.out.println("Diags: "+board.Sdiagonals);
+            //      System.out.println("Rows: " + board.Srow);
+            //      System.out.println("Cols: "+ board.Scol);
+            //      System.out.println("Diags: "+board.Sdiagonals);
 
                 gameOver = board.isGameOver();
                 List<Integer> availableMoves = board.getPossibleMoves(); 

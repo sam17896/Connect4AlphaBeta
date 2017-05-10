@@ -51,15 +51,6 @@ class Board {
          }
     }
 
-/*    
-    public int[][] getBoardArray() {
-        return board;
-    }
-    
-    public int pieceAt(int row, int col) {
-        return board[row][col];
-    }
-*/
     
     // to print the board
     @Override
@@ -107,20 +98,7 @@ class Board {
         
         System.out.println("\nError: Wrong Move\n");
     }
-    
-    public void copy(Board board){
         
-        this.rows = board.rows;
-        this.cols = board.cols;
-        this.board = board.board;
-        this.columnPos = board.columnPos;
-        this.Srow = board.Srow;
-        this.Scol = board.Scol;
-        this.Sdiagonals = board.Sdiagonals;
-        this.diagonalPosition = board.diagonalPosition;
-    
-    }
-    
     private void updateState(int piece, int row, int col) {
         char newPiece = (char)(piece+48);
 
@@ -163,7 +141,7 @@ class Board {
     }
     
 
-    //return: 0 for no win, 1 for player 1 win, 2 for player 2 win
+    //return: -1 for no win, 1 for player 1 win, 2 for computer win
     public int isGameOver() {
     
         for (String s : Srow) {

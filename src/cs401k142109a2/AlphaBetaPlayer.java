@@ -2,7 +2,6 @@ package cs401k142109a2;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class AlphaBetaPlayer {
     int turn_player = 1;
@@ -22,10 +21,6 @@ public class AlphaBetaPlayer {
    
     int makeMove(Board board){
         
-        Board tempBoard = new Board();
-        
-        tempBoard.copy(board);
-        
         int depth = 7;
         
         double alpha = Double.NEGATIVE_INFINITY;
@@ -34,7 +29,7 @@ public class AlphaBetaPlayer {
         possibleMoves = board.getPossibleMoves();
         values = new double[6];
         
-        int move = minimax(tempBoard, depth, turn, alpha, beta);
+        int move = minimax(board, depth, turn, alpha, beta);
         
         
         return move;
@@ -45,16 +40,10 @@ public class AlphaBetaPlayer {
         
          // Computer is our maximizing agent , Player is minimizing agent
         
-        Random rand = new Random(possibleMoves.size());
         double score = alpha;
         
         
-        
-        while(possibleMoves.size() > 0){
-          
-          int index = rand.nextInt(possibleMoves.size());
-          int m = possibleMoves.get(index);
-          possibleMoves.remove(index);
+        for (int m : possibleMoves){
           board.makeMove(turn, m);
           values[m]  = alphaBeta(board, turn, alpha, beta, depth);
           board.undoMove(turn, m);
@@ -70,7 +59,7 @@ public class AlphaBetaPlayer {
     
     double alphaBeta(Board board, int turn, double alpha, double beta, int depth){
         
-        if(depth==0 || board.getPossibleMoves().size() == 0 || board.isGameOver() != -1){
+        if(depth==0 || board.getPossibleMoves().isEmpty() || board.isGameOver() != -1){
             counter++;
             double value = evaluate(turn, board);
             return value;
